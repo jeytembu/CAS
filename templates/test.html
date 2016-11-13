@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load modtag %}
+{% block head %}
+	<script src = "{% static 'js/paging.js' %}"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="jumbotron">
+        {% if question_list %}
+	    	<form action="{% url 'results'%}" method="post">{% csrf_token %}
+	    		<div id="maincon">
+	    			{% for question in question_list%}
+		    		<div class = "question">
+						<p>{{forloop.counter}}{{". "}}{{question.text}}</p>
+						{% for choice in question.choices_set.all %}
+			    			<input type="radio" name="choice{{question.id}}" id="choice{{ forloop.counter }}" value="{{choice.id }}" />
+			    			<label for="choice{{ forloop.counter }}">{{ choice.text }}</label><br/>
+						{% endfor %}
+					</div>	
+					{% endfor %}
+					<div class = "question">
+						{% for subject in subjects%}
+							<br><p style="display:inline" style="margin-left: 20px">{{subject.name}}</p>
+							{%for grade in grades%}
+								<input type="radio" name="grade{{subject.code}}" id="grade{{ forloop.counter }}" value="{{grade.id }}" />
+				    			<label for="grade{{ forloop.counter }}" style="margin-right: 20px">{{ grade.name }}</label>
+							{% endfor%}
+						{% endfor %}	
+						<br><input type="submit" value="submit" />
+					</div>	
+					<div id="pageNavPosition"></div>
+					<div id="tst"></div>
+	    		</div>
+			</form>
+		{% else %}
+    		<p>No questions currently are available.</p>
+		{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascript %}
+<script>
+	// var pg ="{{pg}}";
+ //    var pager = new Pager('maincon', 4); 
+ //    pager.init(); 
+ //    pager.showPageNav('pager', 'pageNavPosition'); 
+ //    pager.showPage(1);
+ 
+// 	addEventListener("load",function(){
+//     // var links= document.getElementsByTagName("a");
+//     // for (var i=0;i<links.length;i++){
+//     //     links[i].addEventListener("click",function(e){
+//     //     alert("NOPE!, I won't take you there haha");
+//     //     //prevent event action
+//     //     e.preventDefault();
+//     //     })
+//     // }
+//     var link = document.getElementById('text')
+//     link.addEventListener("click",function(e){
+//     	var a ="{{length}}";
+//     	alert(a);
+//     	e.preventDefault();
+//     })
+// }); 
+</script>
+{% endblock %}

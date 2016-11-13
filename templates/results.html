@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="jumbotron">
+        <a href="{% url 'explanation' %}">explanation</a>
+        {% if res %}
+            <table class="table table-striped tablerow">
+            <thead>
+                <tr>
+                    <th>Row</th>
+                    <th>Course Name</th>
+                    <th>Details</th>
+                    <th>Universities</th>
+                    <th>Favorites</th>
+                </tr>
+            </thead>
+            <tbody>
+            {%for key,values in courses.iteritems%}
+                <tr class="tablerow">
+                    <td height="80"><h4>{{forloop.counter }}</h4></td>
+                    <td class = "rowcourse" height="80"><h4>{{key}}</h4></td><td>
+                {%for value in values%}
+                    {% if forloop.first and value|length%}
+                        <div class="dropdown">
+                             <button class="btn btn-info btn-xs  viewbutton dropdown-toggle " name="{{forloop.parentloop.counter}}" value="{{value}}" type="button" id="menu{{forloop.parentloop.counter}}" data-toggle="dropdown" onclick="MyFunction(this.value,this.name)">overview<span class="caret"></span></button> 
+                              <ul class="dropdown-menu" role="menu" aria-labelledby="menu{{forloop.parentloop.counter}}">
+                                <li class="dropdown-header">Course Overview</li>
+                                <li class="divider"></li>
+                                <li class="desc" id="change{{forloop.parentloop.counter}}"></li>
+                              </ul>
+                        </div></td><td class="rowuni" height="80">
+                    {% else %}
+                        {% if forloop.first %}
+                            </td><td class="rowuni" height="80">
+                        {% else %}    
+                            <h4>{{value}}</h4>
+                        {% endif %}    
+                    {% endif %}
+                {%endfor%}
+                </td> 
+                <td>
+                    <button class="btn btn-success btn-xs favbutton">add</button>
+                    <button class="btn btn-danger btn-xs favbutton">remove</button>
+                </td>
+                </tr>
+            {%endfor%}
+            </tbody>
+            </table>
+		{% else %}
+    		<p>No result</p>
+		{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        function MyFunction(clicked,num){
+            var h = "change"+num;
+            var text = document.getElementById(h);
+            text.innerHTML = clicked;
+        }
+    </script>
+{% endblock %}

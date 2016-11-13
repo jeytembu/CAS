@@ -1,0 +1,118 @@
+{% load staticfiles %}
+{% if log_form.errors%}
+        <script>alert("invalid password or username")</script>
+{% endif%}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Course Advisory System</title>
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/landing.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Course Advisory System</a>
+                </div>
+            </div>
+        </nav>
+        <p class='slung'>Lets find you some undergraduate courses.</p>
+        <button class="sign-up" data-toggle="modal" data-target="#signup">sign up</button>
+        <button class="login" data-toggle="modal" data-target="#login">log in</button>
+        <div class="container">
+            <div class="modal fade" id="signup" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Register</h4>
+                        </div>
+                        <form method="post" action="{% url 'index' %}">
+                        {% csrf_token %}
+                        <p class="bs-component">
+                                <table class="tabl">
+                                    <tr>
+                                        <td class="labels">{{ user_form.first_name.label }}</td>
+                                        <td class="textbox">{{ user_form.first_name}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="labels">{{ user_form.last_name.label }}</td>
+                                        <td class="textbox">{{ user_form.last_name}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="labels">{{ user_form.email.label }}</td>
+                                        <td class="textbox">{{ user_form.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="labels">{{user_form.username.label }}</td>
+                                        <td class="textbox">{{ user_form.username }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="labels">{{ user_form.password.label }}</td>
+                                        <td class="textbox">{{ user_form.password }}</td>
+                                    </tr>
+                                </table>
+                            </p>
+                            <p class="bs-component">
+                                <center>
+                                    <input class="btn btn-success btn-sm" type="submit" value="Register" />
+                                </center>
+                            </p>
+                        </form>    
+                    </div>
+      
+                 </div>
+             </div>
+             <div class="modal fade" id="login" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Login</h4>
+                        </div>
+                        <form method="post" action="{% url 'logon' %}">
+                        <p class="bs-component">
+                                <table class="tabl">
+                                    <tr>
+                                        <td class="labels">{{ authentication_form.username.label }}</td>
+                                        <td class="textbox">{{ authentication_form.username }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="labels">{{ authentication_form.password.label }}</td>
+                                        <td class="textbox">{{ authentication_form.password }}</td>
+                                    </tr>
+                                </table>
+                            </p>
+                            <p class="bs-component">
+                                <center>
+                                    <input class="btn btn-success btn-sm" type="submit" value="login" />
+                                </center>
+                                
+                            </p>
+                        </form>    
+                    </div>
+      
+                 </div>
+             </div>
+        </div>
+        <script src = "{% static 'js/jquery.min.js' %}"></script>
+        <script src = "{% static 'js/bootstrap.min.js' %}"></script>
+    </body>
+    <script>
+        function show(){
+            document.getElementById('popup').style.display= "block";
+        }
+         function hide(){
+            document.getElementById('popup').style.display= "none";
+        }
+    </script>
+ </html>

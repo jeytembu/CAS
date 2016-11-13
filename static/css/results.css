@@ -1,0 +1,47 @@
+.viewbutton{
+	 margin:auto;
+  	display:block;
+  	margin-top:5%;
+}
+.favbutton{
+	margin:auto;
+  	display:block;
+  	float:left;
+  	margin-top:5%;
+  	margin-left: 10px;
+}
+/*.uniname{
+	margin-left:50px;
+	margin-top:-10px;
+	margin-bottom: 10px;
+	color:blue;
+	font-size: 25px;
+}*/
+.rowcourse{
+	width: 26%;
+	margin-right:200px;
+}
+.rowuni{
+	width:30%;
+}
+.btn-info{
+	width:60%;
+	font-size: 18px;
+}
+.btn .caret{
+	margin-left:5px;
+}
+.dropdown-menu {
+    width: 500px ;
+}
+.dropdown-header{
+	font-size: 19px;
+	color:black;
+	font-weight: bold;
+	text-align: center;
+} 
+.desc{
+	margin-left: 10px;
+	font-size: 19px;
+	margin-right: 10px
+}
