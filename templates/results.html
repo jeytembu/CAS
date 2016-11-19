@@ -1,12 +1,18 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% block content %}
+{% load modtag %}
+{% block head %}
+    <link href="{% static 'css/results.css' %}" rel="stylesheet">
+    <link href="{% static 'css/results_pager.css' %}" rel="stylesheet">
+    <script src = "{% static 'js/results_pagination.js' %}"></script>
+{% endblock %}
+{% block content %} 
 <div class="container">
     <div class="row">
         <div class="jumbotron">
         <a href="{% url 'explanation' %}">explanation</a>
         {% if res %}
-            <table class="table table-striped tablerow">
+            <table class="table table-striped tablerow" id="results">
             <thead>
                 <tr>
                     <th>Row</th>
@@ -25,7 +31,7 @@
                     {% if forloop.first and value|length%}
                         <div class="dropdown">
                              <button class="btn btn-info btn-xs  viewbutton dropdown-toggle " name="{{forloop.parentloop.counter}}" value="{{value}}" type="button" id="menu{{forloop.parentloop.counter}}" data-toggle="dropdown" onclick="MyFunction(this.value,this.name)">overview<span class="caret"></span></button> 
-                              <ul class="dropdown-menu" role="menu" aria-labelledby="menu{{forloop.parentloop.counter}}">
+                              <ul class="dropdown-menu dropsize" role="menu" aria-labelledby="menu{{forloop.parentloop.counter}}">
                                 <li class="dropdown-header">Course Overview</li>
                                 <li class="divider"></li>
                                 <li class="desc" id="change{{forloop.parentloop.counter}}"></li>
@@ -41,13 +47,22 @@
                 {%endfor%}
                 </td> 
                 <td>
-                    <button class="btn btn-success btn-xs favbutton">add</button>
-                    <button class="btn btn-danger btn-xs favbutton">remove</button>
+                    <button class="btn btn-success btn-xs addbutton" id="add{{forloop.counter}}" value="{{forloop.counter}}">add</button>
+                    <button class="btn btn-danger btn-xs rembutton disabled" id="rem{{forloop.counter}}" value="{{forloop.counter}}">remove</button>
+                    <div class="rating">
+                        {% if forloop.counter|mod:2 %}
+                            <span class="star st">&#9734;</span>
+                        {% else %}
+                            <span class="star1 st">&#9734;</span> 
+                        {% endif %}
+                    </div>
                 </td>
                 </tr>
             {%endfor%}
             </tbody>
             </table>
+            <div id="pageNavPosition"></div>
+            <p id="showresults"></p>
 		{% else %}
     		<p>No result</p>
 		{% endif %}
@@ -57,10 +72,24 @@
 {% endblock %}
 {% block javascript %}
     <script>
+        var pager = new Pager('results', 7,'showresults'); 
+        pager.init();
+        pager.showPageNav('pager', 'pageNavPosition'); 
+        pager.showPage(1);
         function MyFunction(clicked,num){
             var h = "change"+num;
             var text = document.getElementById(h);
             text.innerHTML = clicked;
         }
+        $('.btn-success').click(function(){
+            $(this).addClass("disabled");
+            $(this).next().removeClass("disabled");
+            $(this).siblings("div").children().addClass("full");
+        });    
+        $('.btn-danger').click(function(){
+            $(this).addClass("disabled");
+            $(this).prev().removeClass("disabled");
+            $(this).siblings("div").children().removeClass("full");
+        });
     </script>
 {% endblock %}
