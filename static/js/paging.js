@@ -1,4 +1,5 @@
 var count = 0;
+var width = 0;
 function Pager(tableName, itemsPerPage) {
     this.tableName = tableName;
     this.itemsPerPage = itemsPerPage;
@@ -22,12 +23,14 @@ function Pager(tableName, itemsPerPage) {
     		alert("not inited");
     		return;
     	}
+        
         var oldPageAnchor = document.getElementById('pg'+this.currentPage);
         oldPageAnchor.className = 'pg-normal';
         
         this.currentPage = pageNumber;
         var newPageAnchor = document.getElementById('pg'+this.currentPage);
         newPageAnchor.className = 'pg-selected';
+
         var from = (pageNumber - 1) * itemsPerPage + 1;
         var to = from + itemsPerPage - 1;
         this.showRecords(from, to);
@@ -59,8 +62,17 @@ function Pager(tableName, itemsPerPage) {
     }   
     
     this.prev = function() {
-        if (this.currentPage > 1)
+        if (this.currentPage > 1){
+            if(width < 98){
+                var rows = document.getElementsByClassName('question');
+                var elem = document.getElementById('myBar');
+                var wid = window.getComputedStyle(elem, null).getPropertyValue("width");
+                var reduce = itemsPerPage * (100/(rows.length-1));
+                width =width - reduce;
+                elem.style.width = width + '%'; 
+            }
             this.showPage(this.currentPage - 1);
+        }    
     }
     
     this.next = function() {
@@ -84,7 +96,16 @@ function Pager(tableName, itemsPerPage) {
                }
             }
             if(bol == true){
+                var elem = document.getElementById('myBar');
+                var wid = window.getComputedStyle(elem, null).getPropertyValue("width");
+                qstpercent = 100/(rows.length-1);
+                if(width<=100){
+                    w = qstpercent*this.itemsPerPage;
+                    width += w;
+                    elem.style.width = width + '%'; 
+                }
                 this.showPage(this.currentPage + 1);
+
             }
             else{
                 var tt = document.getElementById("tst");
@@ -108,9 +129,9 @@ function Pager(tableName, itemsPerPage) {
     	}
         else{
             var element = document.getElementById(positionId);
-            var pagerHtml = '<span onclick="' + pagerName + '.prev();" class="pg-normal" id="previous"> &#171 Prev </span>  ';
+            var pagerHtml = '<span onclick="' + pagerName + '.prev();" class="pg-normal" id="previous"> &#171 Prev </span>';
             for (var page = 1; page <= this.pages; page++) 
-                pagerHtml += '<span id="pg' + page + '" class="pgs pg-normal" onclick="' + pagerName + '.showPage(' + page + ');">' + page + '</span>  ';
+                pagerHtml += '<span id="pg' + page + '" class="pgs pg-normal" onclick="' + pagerName + '.showPage(' + page + ');">' + page + '</span>';
             pagerHtml += '<span onclick="'+pagerName+'.next();" class="pg-normal"> Next &#187;</span>'; 
             element.innerHTML = pagerHtml;   
              
