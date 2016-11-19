@@ -1,14 +1,52 @@
 .viewbutton{
-	 margin:auto;
+
   	display:block;
   	margin-top:5%;
 }
-.favbutton{
+.rembutton{
 	margin:auto;
   	display:block;
   	float:left;
   	margin-top:5%;
   	margin-left: 10px;
+  	width:30%;
+}
+.addbutton{
+	margin:auto;
+  	display:block;
+  	float:left;
+  	margin-top:5%;
+  	width:30%;
+}
+.rating{
+	margin:auto;
+  	display:block;
+  	margin-top:-1px;
+  	
+}
+.star{
+	position: relative;
+	font-size:30px;
+	color: #ecf0f1;
+	margin-left: 7%;
+}
+.star1{
+	position: relative;
+	font-size:30px;
+	color: #f9f9f9;
+	margin-left: 7%;
+}
+.star1.full:before{
+	text-shadow: 0 0 2px rgba(0,0,0,0.7);
+    color: #FFD700;
+    content: '\2605'; 
+
+}
+.star.full:before{
+	text-shadow: 0 0 2px rgba(0,0,0,0.7);
+    color: #FFD700;
+    content: '\2605'; 
+
 }
 /*.uniname{
 	margin-left:50px;
@@ -31,7 +69,7 @@
 .btn .caret{
 	margin-left:5px;
 }
-.dropdown-menu {
+.dropsize {
     width: 500px ;
 }
 .dropdown-header{
@@ -44,4 +82,7 @@
 	margin-left: 10px;
 	font-size: 19px;
 	margin-right: 10px
+}
+th{
+	font-size:20px;
 }
