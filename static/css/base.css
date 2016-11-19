@@ -1,0 +1,20 @@
+body{
+	background-image: url("../img/bg1-t.png");
+}
+.navbar-custom {
+    background-color:#007f00;
+    color:#ffffff;
+    border-radius:0;
+}
+
+.navbar-custom .navbar-nav > li > a {
+    color:#fff;
+}
+.navbar-custom .navbar-nav > .active > a, .navbar-nav > .active > a:hover, .navbar-nav > .active > a:focus {
+    color: #007f00;
+    background-color:black;
+}
+.navbar-custom .navbar-brand {
+    color:#eeeeee;
+    font-size:20px;
+}
