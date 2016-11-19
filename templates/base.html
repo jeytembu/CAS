@@ -6,9 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Course Advisory System</title>
         <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-        <link href="{% static 'css/landing.css' %}" rel="stylesheet">
-        <link href="{% static 'css/pager.css' %}" rel="stylesheet">
-        <link href="{% static 'css/results.css' %}" rel="stylesheet">
+        <link href="{% static 'css/base.css' %}" rel="stylesheet">
+        <script src = "{% static 'js/jquery.min.js' %}"></script>
         {% block head %}
         {% endblock %}
     </head>
@@ -42,7 +41,7 @@
         </nav>
         {% block content %}
         {% endblock %}
-        <script src = "{% static 'js/jquery.min.js' %}"></script>
+        <!-- <script src = "{% static 'js/jquery.min.js' %}"></script> -->
         <script src = "{% static 'js/bootstrap.min.js' %}"></script>
 
         {% block javascript %}
