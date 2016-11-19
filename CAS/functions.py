@@ -387,7 +387,7 @@ def clus15(s1,s2,group1,group2,group3,group4,group5,total):
 	if s1['Maths'] >= s2['Physics']:                                               
 		sub2 = s1['Maths']
 	else:
-		sub2 = s1['Physics']	
+		sub2 = s2['Physics']	
 	scores.append(sub2)
 	sub3 = s2['Biology']
 	scores.append(sub3)
@@ -413,15 +413,27 @@ def clus16(s1,s2,group1,group2,group3,group4,group5,total):
 	scores.append(sub1)
 	sub2 = s1['Maths']	
 	scores.append(sub2)
-	if group2[0][1] >= group3[0][1]:
-		sub3 = group2[0][1]
-		subs[group2[1][0]] = group2[1][1]
-		subs[group3[0][0]] = group3[0][1]
+	if group2[0][0] is 'Biology':
+		if group2[1][1] >= group3[0][1]:
+			sub3 = group2[1][1]
+			if len(group2)>2:
+				subs[group2[2][0]] = group2[2][1]
+				subs[group3[0][0]] = group3[0][1]
+		else:
+			sub3 =group3[0][1]
+			subs[group2[1][0]] = group2[1][1]
+			if len(group3) > 1:
+				subs[group3[1][0]] = group3[1][1]		
 	else:
-		sub3 =group3[0][1]
-		subs[group2[0][0]] = group2[0][1]
-		if len(group3):
-			subs[group3[1][0]] = group3[1][1]	
+		if group2[0][1] >= group3[0][1]:
+			sub3 =group2[0][1]
+			subs[group2[1][0]] = group2[1][1]
+			subs[group3[0][0]] = group3[0][1]
+		else:	
+			sub3 =group3[0][1]
+			if len(group3) > 1:
+				subs[group3[1][0]] = group3[1][1]
+			subs[group2[0][0]] = group2[0][1]		
 	scores.append(sub3)		
 	if len(group4) > 0:
 		subs[group4[0][0]] = group4[0][1]
