@@ -1,0 +1,41 @@
+#pageNavPosition{
+	float:right;
+
+}
+ul.paginate {
+	float:right;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
+
+ul.paginate li {
+	display: inline;
+}
+.pg-normal{
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #ddd;
+}
+.pg-selected{
+	color: white;
+	float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    background-color: #007f00;
+    border: 1px solid #007f00;
+}
+ul.paginate li a:visited{
+	color: black;
+	text-decoration: none;
+}
+ul.paginate li a:hover:not(.active) {background-color: #ddd;text-decoration: none;color: black;}
+
+#showresults{
+	float:left;
+	font-size:20px;
+	font-weight: bold;
+}
