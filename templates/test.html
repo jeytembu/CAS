@@ -11,32 +11,48 @@
     <div class="row">
         <div class="jumbotron">
         {% if question_list %}
-	    	<form action="{% url 'results'%}" method="post">{% csrf_token %}
+	    	<form action="{% url 'results'%}" onsubmit="return validate()" method="post">{% csrf_token %}
 	    		<div id="maincon">
 					<div id="myProgress">
 					  <div id="myBar"></div>
 					</div>
+					
 	    			{% for question in question_list%}
 		    		<div class = "question">
 						<p class="mainquestion">{{forloop.counter}}{{". "}}{{question.text}}</p>
+						<div id="tst{{forloop.counter}}" class="tst"></div>
 						{% for choice in question.choices_set.all %}
-			    			<input type="radio" name="choice{{question.id}}" id="choice{{ forloop.counter }}" value="{{choice.id }}"/>
-			    			<label for="choice{{ forloop.counter }}" class="rad">{{ choice.text }}</label><br/>
+							{% if "choice"|append:question.id|app:request.session|compare:choice.id %}
+				    			<input type="radio" name="choice{{question.id}}" id="choice{{ forloop.counter }}" value="{{choice.id }}" checked/>
+				    			<label for="choice{{ forloop.counter }}" class="rad">{{ choice.text }}</label><br/>
+				    		{% else%}
+				    			<input type="radio" name="choice{{question.id}}" id="choice{{ forloop.counter }}" value="{{choice.id }}"/>
+				    			<label for="choice{{ forloop.counter }}" class="rad">{{ choice.text }}</label><br/>		
+				    		{% endif %}	
 						{% endfor %}
 					</div>	
 					{% endfor %}
 					<div class = "question">
-						{% for subject in subjects%}
-							<br><p style="display:inline" style="margin-left: 20px">{{subject.name}}</p>
-							{%for grade in grades%}
-								<input type="radio" name="grade{{subject.code}}" id="grade{{ forloop.counter }}" value="{{grade.id }}" />
-				    			<label for="grade{{ forloop.counter }}" style="margin-right: 20px">{{ grade.name }}</label>
-							{% endfor%}
-						{% endfor %}	
-						<br><input type="submit" value="submit" onclick="progress()" />
+						<p class="mainquestion">{{length}}{{". "}}Fill in your KCSE scores in the various subjects</p>
+						<table class="table table-striped">
+							{% for subject in subjects%}
+								<tr><td class="subjects">{{forloop.counter}}{{". "}}{{subject.name}}</td>
+								{%for grade in grades%}
+									{% if "grade"|appends:subject.code|app:request.session|compare:grade.id%}
+										<td><input type="radio" name="grade{{subject.code}}" id="grade{{ forloop.counter }}" value="{{grade.id }}" checked/>
+						    			<label for="grade{{ forloop.counter }}">{{ grade.name }}</label></td>
+						    		{% else %}
+						    			<td><input type="radio" name="grade{{subject.code}}" id="grade{{ forloop.counter }}" value="{{grade.id }}" />
+						    			<label for="grade{{ forloop.counter }}">{{ grade.name }}</label></td>
+						    		{% endif %}		
+								{% endfor%}
+							</tr>
+						{% endfor %}
+						</table>
+							
+						<br><button type="submit" class="btn btn-warning btn-xs" value="test_submit" name="test_submit">submit</button>
 					</div>	
 					<div id="pageNavPosition"></div>
-					<div id="tst"></div>
 	    		</div>
 			</form>
 		{% else %}
@@ -47,32 +63,21 @@
 </div>
 {% endblock %}
 {% block javascript %}
-<script>
-	var pg ="{{pg}}";
-    var pager = new Pager('maincon', 4); 
-    pager.init(); 
-    pager.showPageNav('pager', 'pageNavPosition'); 
-    pager.showPage(1);
-
-    
-
-    
- 
-// 	addEventListener("load",function(){
-//     // var links= document.getElementsByTagName("a");
-//     // for (var i=0;i<links.length;i++){
-//     //     links[i].addEventListener("click",function(e){
-//     //     alert("NOPE!, I won't take you there haha");
-//     //     //prevent event action
-//     //     e.preventDefault();
-//     //     })
-//     // }
-//     var link = document.getElementById('text')
-//     link.addEventListener("click",function(e){
-//     	var a ="{{length}}";
-//     	alert(a);
-//     	e.preventDefault();
-//     })
-// }); 
-</script>
+	{% if request.session.choice1 %}
+		{% with 6 as num %}
+			<script>
+			    var pager = new Pager('maincon', 4); 
+			    pager.init(); 
+			    pager.showPageNav('pager', 'pageNavPosition'); 
+			    pager.showPage({{num}});
+			</script>
+		{% endwith %}
+	{%else%}
+		<script>
+		    var pager = new Pager('maincon', 4); 
+		    pager.init(); 
+		    pager.showPageNav('pager', 'pageNavPosition'); 
+		    pager.showPage({{num}});
+		</script>    
+	{% endif %}
 {% endblock %}
