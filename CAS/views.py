@@ -5,8 +5,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login,logout
 from CAS.forms import UserForm,LoginForm
 from django.template import RequestContext
-from CAS.models import Questions,Choices,Subjects,Grades,SubjectGrade,PersonalityCareer,Personalities,Courses,CourseCareer,Universities,Explanations,Careers
+from CAS.models import Questions,Choices,Subjects,Grades,SubjectGrade,PersonalityCareer,Personalities,Universities,Explanations,Careers,CourseCareer,Courses,Favorites
 from CAS.functions import *
+from django.http import JsonResponse,HttpResponse
 import clips
 from django.shortcuts import redirect
 import urllib
@@ -72,18 +73,25 @@ def test(request):
 	question_list = Questions.objects.order_by('id')[:]
 	subjects = Subjects.objects.order_by('code')[:]
 	grades = Grades.objects.order_by('id')[:]
-	length = len(question_list)
-	pg = 0
-	context = {'question_list': question_list,'length':length,'pg':pg,'subjects':subjects,'grades':grades,'value':value}
+	length = len(question_list) + 1;
+	num = 1
+	favs = []
+	favcourses = Favorites.objects.filter(user_id = request.user.id)
+	if favcourses:
+		for favcourse in favcourses:
+			 favs.append(favcourse.course.name)		 
+		request.session['favs'] = favs	 
+	context = {'question_list': question_list,'num':num,'length':length,'subjects':subjects,'grades':grades,'value':value}
 	return render(request, 'test.html', context)
 
 def explanation(request):
-	explanation = Explanations.objects.all().last()
+	explanation = Explanations.objects.filter(user_id=request.user.id).last()
 	desc = explanation.description
 	return render(request, 'explanation.html',{'desc':desc})
 
 def results(request):
 	choices,codes,careers=[],[],[]
+	cat = set()
 	total,temp = 0,0
 	grades,subs,clusters,courses = {},{},{},{}
 	s1,s2,s3,s4,s5={},{},{},{},{}
@@ -91,24 +99,24 @@ def results(request):
 	if request.method == 'POST':
 		results=request.POST.items()
 		for key,value in results:
+			request.session[str(key)] = value
 			if key.startswith('choice'):
 				choice=Choices.objects.get(id=value)
 				choices.append(choice.personality)
 			elif key.startswith('grade'):
-				if key.startswith('grade'):
-					grade= Grades.objects.get(id=value)
-					subject = Subjects.objects.get(code=key[5:])
-					grades[subject.name] = grade.points
-					if subject.group_id == 1:
-						s1[subject.name] = grade.points
-					elif subject.group_id == 2:
-						s2[subject.name] = grade.points	
-					elif subject.group_id == 3:
-						s3[subject.name] = grade.points
-					elif subject.group_id == 4:
-						s4[subject.name] = grade.points
-					elif subject.group_id == 5:
-						s5[subject.name] = grade.points	
+				grade= Grades.objects.get(id=value)
+				subject = Subjects.objects.get(code=key[5:])
+				grades[subject.name] = grade.points
+				if subject.group_id == 1:
+					s1[subject.name] = grade.points
+				elif subject.group_id == 2:
+					s2[subject.name] = grade.points	
+				elif subject.group_id == 3:
+					s3[subject.name] = grade.points
+				elif subject.group_id == 4:
+					s4[subject.name] = grade.points
+				elif subject.group_id == 5:
+					s5[subject.name] = grade.points	
 
 		# for key, value in sorted(s2.iteritems(), key=lambda (k,v): (v,k)):
 		group1 = sorted(s1.items(), key=lambda x: x[1], reverse=True)
@@ -249,28 +257,100 @@ def results(request):
 								uni = Universities.objects.get(id = course.university_id)
 								if course.name in courses:
 									if uni.name not in courses[course.name]:
+										if course.category:
+											cat.add(course.category);
 										courses[course.name].append(uni.name)
 								else:
 									key = course.name;
 									courses.setdefault(key,[])
 									courses[key].append(course.overview)
 									courses[key].append(uni.name)
+									if course.category:
+											cat.add(course.category)
 									
 				occup = ','.join(careers)					
 				desc = "your personality type is "+res+ " meaning you are "+personality.description+ res+" excel in occupations such as "+occup+" among others.Courses recommended for you are in inline with your personality type and also KCSE score."				
-				explanation = Explanations.objects.create(user_id=1,description=desc);
-				counter = 0;
-
-
-				return render(request, 'results.html',{'res':res,'courses':courses,'total':total,'counter':counter,'cluster1':cluster1,'cluster2':cluster2,'cluster3':cluster3,'cluster4':cluster4,'cluster5':cluster5,'cluster7':cluster7})
+				explanation = Explanations.objects.create(user_id=request.user.id,description=desc)
+				counter = 0 
+				request.session['courses'] = courses
+				cat1 = list(cat)
+				request.session['cat']=cat1
+				return render(request, 'results.html',{'res':res,'cat':cat,'courses':courses})
 			else:
 				res = "Only 7 to 9 kcse subjects allowed"
 				return render(request, 'error.html',{'res':res})		
 		else:
 			res = "Fill all the questions"
 			return render(request, 'error.html',{'res':res})
+
+def category(request):
+	if request.is_ajax:
+		res = request.session.get('courses')
+		cat =request.session.get('cat')
+		courses = {}
+		cate = request.GET.get('cat')
+		cate = cate.replace("_"," ")
+		if not (str(cate) == 'All'):
+			for key,values in res.iteritems():
+				cos = Courses.objects.filter(name = key)[0]
+				lol= Courses.objects.filter(category = cate)
+				if cos in lol:
+					courses.setdefault(key,[])
+					for val in values:
+						courses[key].append(val)
+		else:
+			for key,values in res.iteritems():
+				courses.setdefault(key,[])
+				for val in values:
+					courses[key].append(val)
+		return render(request,'table_body.html',{'courses':courses})
+
+def addfavorite(request):
+	if request.is_ajax:
+		if request.method == "POST":
+			count = 0;
+			unis,favs = [],[]
+			coursename = request.POST.get('favcourse')
+			res = request.session.get('courses')
+			if 'favs' in request.session:
+				favs = request.session.get('favs')
+				favs.append(coursename)
+			else:	
+				favs.append(coursename)
+			request.session['favs'] = favs
+			for key,values in res.iteritems():
+				if key == coursename:
+					for val in values:
+						if count !=0:
+							unis.append(val)
+						count+=1	
+					break		
+			for uni	in unis:
+				universities = Universities.objects.get(name = uni)	
+				favcourses = Courses.objects.get(name = coursename,university_id= universities.id);
+				Favorites.objects.create(user_id=request.user.id,course_id=favcourses.code,university_id=favcourses.university_id)
+	return render(request,'table_body.html')	
+
+def getfavorites(request):
+	favs = Favorites.objects.all()
+	return  render(request,'favorites.html',{'favs':favs})	
+
+def delfavorites(request):
+	if request.is_ajax:
+		if request.method == "POST":
+			count = 0;
+			unis = []
+			coursename = request.POST.get('delcourse')
+			favs = request.session.get('favs')
+			favs.remove(coursename)
+			request.session['favs'] = favs
+			favcourses = Courses.objects.filter(name = coursename)
+			for favcourse in favcourses:
+				delcourses = Favorites.objects.get(course_id = favcourse.code).delete()
+	return render(request,'table_body.html')	
+
+
 		
 		
-			
-		
+
 		
