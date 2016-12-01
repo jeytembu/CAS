@@ -16,9 +16,9 @@
     margin:auto;
     display:block;
     position: relative;
-    width: 63%;
+    width: 60%;
     height: 30px;
-    background-color: #ddd;
+    background-color:#DCDCDC;
     margin-bottom: 10px;
     border-radius: 25px;
 }
@@ -29,7 +29,8 @@
     position: absolute;
     width: 0%;
     height: 100%;
-    background-color: #4CAF50;
+    transition: width 1s;
+    background-color: #f39c12;
     border-radius: 25px;
 }
 .question{
@@ -46,4 +47,12 @@ input[type=radio]{
   margin-left:20px;
   margin-top:2px;
   outline: none;
-  }
+}
+.tst{
+    color:red;
+    padding-top:-6px;
+    padding-left:50px;
+}
+.subjects{
+    font-size:20px;
+}
