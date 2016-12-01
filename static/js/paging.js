@@ -1,5 +1,6 @@
 var count = 0;
 var width = 0;
+var qstcount = 0;
 function Pager(tableName, itemsPerPage) {
     this.tableName = tableName;
     this.itemsPerPage = itemsPerPage;
@@ -34,9 +35,7 @@ function Pager(tableName, itemsPerPage) {
         var from = (pageNumber - 1) * itemsPerPage + 1;
         var to = from + itemsPerPage - 1;
         this.showRecords(from, to);
-        var tt = document.getElementById("tst");
-        tt.innerHTML = "";
-        if(pageNumber == 1){
+        if(pageNumber === 1){
             document.getElementById('previous').style.display = 'none';
             if(count > 0){
                 for(var x=1; x <= count;x++){
@@ -50,23 +49,28 @@ function Pager(tableName, itemsPerPage) {
             }
                 
         }
-         else{
+        else{
             document.getElementById('previous').style.display = '';
-            if(pageNumber >= 1){
+            if(pageNumber >= 1){;
+                console.log('hey')
                 for(var x=1; x <= pageNumber;x++){
                     document.getElementById('pg'+x).style.display = '';
+                }
+                if(pageNumber == 6 && width<98){
+                    var elem = document.getElementById('myBar');
+                    width=100;
+                    elem.style.width = width + '%';
                 }
             }
              count = pageNumber;
         }  
-    }   
+}   
     
     this.prev = function() {
         if (this.currentPage > 1){
             if(width < 98){
                 var rows = document.getElementsByClassName('question');
                 var elem = document.getElementById('myBar');
-                var wid = window.getComputedStyle(elem, null).getPropertyValue("width");
                 var reduce = itemsPerPage * (100/(rows.length-1));
                 width =width - reduce;
                 elem.style.width = width + '%'; 
@@ -77,6 +81,9 @@ function Pager(tableName, itemsPerPage) {
     
     this.next = function() {
         if (this.currentPage < this.pages) {
+            if(qstcount > 0){
+                document.getElementById("tst"+qstcount).style.display = 'none';
+            }
             var end = this.currentPage * this.itemsPerPage;
             var begin = end - itemsPerPage;
             var bol;
@@ -92,14 +99,16 @@ function Pager(tableName, itemsPerPage) {
                     }
                }
                if(bol == false){
+                    qstcount=x+1;
+                    var tt = document.getElementById("tst"+qstcount);
+                    tt.innerHTML = "**please provide an answer***";
                     break;
                }
             }
             if(bol == true){
                 var elem = document.getElementById('myBar');
-                var wid = window.getComputedStyle(elem, null).getPropertyValue("width");
                 qstpercent = 100/(rows.length-1);
-                if(width<=100){
+                if(width<100){
                     w = qstpercent*this.itemsPerPage;
                     width += w;
                     elem.style.width = width + '%'; 
