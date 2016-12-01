@@ -18,9 +18,9 @@ from django.contrib import admin
 from django.contrib.auth import views
 from CAS.forms import LoginForm
 
-
-
 urlpatterns = [
+    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
+    url(r'^jet/', include('jet.urls', 'jet')),
     url(r'^admin/', admin.site.urls),
     url(r'',include('CAS.urls')),
     # url(r'^login/$',views.login, {'template_name':'index.html','authentication_form': LoginForm}, name='login'),
