@@ -9,7 +9,6 @@ function Pager(tableName, itemsPerPage,resdiv) {
     
     this.showRecords = function(from, to) {        
         var rows = document.getElementById(tableName).rows;
-        // i starts from 1 to skip table header row
         for (var i = 1; i < rows.length; i++) {
             if (i < from || i > to)  
                 rows[i].style.display = 'none';
@@ -33,9 +32,6 @@ function Pager(tableName, itemsPerPage,resdiv) {
         }
         var resnum = document.getElementById(resdiv);
         var res = "Showing results "+this.count+" of "+records;
-        //  var text = document.getElementById(resdiv);
-        // var res = "Showing results "+this.count+" of "+records;
-        // text.innerHTML(res);
 
         var oldPageAnchor = document.getElementById('pg'+this.currentPage);
         oldPageAnchor.className = 'pg-normal';
@@ -87,9 +83,6 @@ function Pager(tableName, itemsPerPage,resdiv) {
         
         element.innerHTML = pagerHtml;
 
-    }
-    this.showRecordNum = function(){
-        document.getElementById(resdiv).innerHTML('lol');
     }
 }
 
