@@ -83,6 +83,9 @@
 	font-size: 19px;
 	margin-right: 10px
 }
+.vis{
+	display: none;
+}
 th{
 	font-size:20px;
 }
