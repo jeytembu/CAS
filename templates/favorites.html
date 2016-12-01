@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load modtag %}
+{% block head %}
+    <link href="{% static 'css/results.css' %}" rel="stylesheet">
+    <link href="{% static 'css/results_pager.css' %}" rel="stylesheet">
+    <script src = "{% static 'js/results_pagination.js' %}"></script>
+    <script src = " {% static 'js/categorise_course.js' %} "></script>
+{% endblock %}
+{% block content %} 
+        <div class="container">
+            <div class="row">
+                <div class="jumbotron">
+                   <table class="table table-striped tablerow" id="favorites">
+                        <thead>
+                            <tr>
+                                <th>Row</th>
+                                <th>Course Name</th>
+                                <th>Universities</th>
+                                <th style="display: none">test</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for fav in favs%}
+                                <tr class="tablerow">
+                                    <td height="80"><h4>{{forloop.counter }}</h4></td>
+                                    <td class = "rowcourse" height="80"><h4>{{fav.course.name}}</h4></td>
+                                    <td class="rowuni" height="80"><h4>{{fav.university.name}}</h4></td>
+                                    <td>
+                                    <button class="btn btn-danger btn-xs rembutton" id="rem{{forloop.counter}}" value="{{forloop.counter}}">remove</button>
+                                    </td>
+                                </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                    <div id="pageNavPosition"></div>
+                    <p id="showresults"></p> 
+                </div>     
+            </div>    
+        </div>   
+{% endblock %}
+{% block javascript %}
+{% endblock %}
