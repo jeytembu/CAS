@@ -33,6 +33,11 @@
                                 <li>
                                     <a href="{% url 'signout' %}">Logout</a>
                                 </li>
+                                {% if request.session.favs%}
+                                    <li>
+                                        <a href="{% url 'getfavorites' %}">Favorites</a>
+                                    </li>
+                                {% endif %}    
                             </ul>
                         </li>
                     </ul>
