@@ -1,1 +1,3 @@
 CAS/*.pyc
+CAS/*/*.pyc
+forth_year/*.pyc
