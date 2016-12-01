@@ -1,0 +1,115 @@
+                            {% load modtag %}
+                            <table class="table table-striped tablerow" id="results">
+                            <thead>
+                                <tr>
+                                    <th>Row</th>
+                                    <th>Course Name</th>
+                                    <th>Details</th>
+                                    <th>Universities</th>
+                                    <th>Favorites</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for key,values in courses.iteritems%}
+                                    <tr class="tablerow">
+                                        <td height="80"><h4>{{forloop.counter }}</h4></td>
+                                        <td class = "rowcourse" height="80"><h4>{{key}}</h4></td><td>
+                                    {%for value in values%}
+                                        {% if forloop.first and value|length%}
+                                            <div class="dropdown">
+                                                 <button class="btn btn-info btn-xs  viewbutton dropdown-toggle " name="{{forloop.parentloop.counter}}" value="{{value}}" type="button" id="menu{{forloop.parentloop.counter}}" data-toggle="dropdown" onclick="MyFunction(this.value,this.id)">overview<span class="caret"></span></button> 
+                                                  <ul class="dropdown-menu dropsize" role="menu" aria-labelledby="menu{{forloop.parentloop.counter}}">
+                                                    <li class="dropdown-header">Course Overview</li>
+                                                    <li class="divider"></li>
+                                                    <li class="desc" id="change{{forloop.parentloop.counter}}"></li>
+                                                  </ul>
+                                            </div></td><td class="rowuni" height="80">
+                                        {% else %}
+                                            {% if forloop.first %}
+                                                </td><td class="rowuni" height="80">
+                                            {% else %}    
+                                                <h4>{{value}}</h4>
+                                            {% endif %}    
+                                        {% endif %}
+                                    {%endfor%}
+                                    </td> 
+                                    <td>
+                                        {% if key|existsCourse:request.session.favs %}
+                                            <input type="text" name="fav" value="{{key}}" id="favcor{{forloop.counter}}" class="vis" style="display: none;">
+                                            <input type="submit" name="add" id="add{{forloop.counter}}" value="add" class="btn btn-success btn-xs addbutton disabled">
+                                            <!-- <button class="btn btn-success btn-xs addbutton" id="add{{forloop.counter}}" value="{{key}}">add</button> -->
+                                            <input type="submit" name="remove" id="rem{{forloop.counter}}" value="remove" class="btn btn-danger btn-xs rembutton ">
+                                            <!-- <button class="btn btn-danger btn-xs rembutton disabled" id="rem{{forloop.counter}}" value="{{forloop.counter}}">remove</button> -->
+                                            <div class="rating">
+                                                {% if forloop.counter|mod:2 %}
+                                                    <span class="star st full">&#9734;</span>
+                                                {% else %}
+                                                    <span class="star1 st full">&#9734;</span> 
+                                                {% endif %}
+                                            </div>
+                                         {% else %}
+                                            <input type="text" name="fav" value="{{key}}" id="favcor{{forloop.counter}}" class="vis" style="display: none;">
+                                            <input type="submit" name="add" id="add{{forloop.counter}}" value="add" class="btn btn-success btn-xs addbutton">
+                                            <!-- <button class="btn btn-success btn-xs addbutton" id="add{{forloop.counter}}" value="{{key}}">add</button> -->
+                                            <input type="submit" name="remove" id="rem{{forloop.counter}}" value="remove" class="btn btn-danger btn-xs rembutton disabled">
+                                            <!-- <button class="btn btn-danger btn-xs rembutton disabled" id="rem{{forloop.counter}}" value="{{forloop.counter}}">remove</button> -->
+                                            <div class="rating">
+                                                {% if forloop.counter|mod:2 %}
+                                                    <span class="star st">&#9734;</span>
+                                                {% else %}
+                                                    <span class="star1 st">&#9734;</span> 
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}      
+                                    </td>
+                                    </tr>
+                                {%endfor%}
+                            </tbody>
+                            </table>
+                            <div id="pageNavPosition"></div>
+                            <p id="showresults"></p> 
+                        </div>
+                </div>         
+            </div>    
+        </div>
+    </div>
+<script>
+    var pager = new Pager('results', 7,'showresults'); 
+    pager.init();
+    pager.showPageNav('pager', 'pageNavPosition'); 
+    pager.showPage(1);
+    $('.btn-success').click(function(){
+        var course = $(this).prev().val();
+        $.ajax({
+            url : "/addfavorite/", // the endpoint
+            type : "POST", // http method
+            data : { 'favcourse' : course }, 
+            // success : function(res) {
+            //     console.log(res); // log the returned json to the console
+            //     console.log("success");} // another sanity check
+        });
+        $(this).addClass("disabled");
+        $(this).next().removeClass("disabled");
+        $(this).siblings("div").children().addClass("full");
+    });    
+    $('.btn-danger').click(function(){
+        var course = $(this).prevAll().eq(1).val()
+        $.ajax({
+            url:"/delfavorites/",
+            type: "POST",
+            data:{'delcourse' : course},
+            // success : function(res) {
+            //     // console.log(res); // log the returned json to the console
+            //     // console.log("success");
+            // } // another sanity check
+        });
+        $(this).addClass("disabled");
+        $(this).prev().removeClass("disabled");
+        $(this).siblings("div").children().removeClass("full");
+    });
+    function MyFunction(value,name){
+        var h = document.getElementById(name).parentNode.lastElementChild.lastElementChild
+        h.innerHTML = value;
+        console.log(h);
+    }
+</script>
