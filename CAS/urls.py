@@ -15,4 +15,5 @@ urlpatterns = [
 	url(r'^addfavorite/', views.addfavorite,name='addfavorite'),
 	url(r'^getfavorites/', views.getfavorites,name='getfavorites'),
 	url(r'^delfavorites/', views.delfavorites,name='delfavorites'),
+	url(r'^delcoursefavorites/', views.delcoursefavorites,name='delcoursefavorites'),
 ]
