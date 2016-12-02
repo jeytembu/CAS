@@ -32,7 +32,6 @@ def append(name,count):
 def appends(name,count):
 	# name = "request.session['choice"+str(count)+"']"
 	string = name+count
-	print string
 	return string	
 
 
@@ -46,4 +45,23 @@ def existsCourse(course,courselist):
 		return True
 	else:
 		return False	
+
+@register.filter(name="getCount")
+def getCount(favlist,name):
+	count = 0
+	for fav in favlist:
+		if fav.course.name == name:
+			if count <= 1:
+				count+=1
+			else:
+				break
+	return count
+
+@register.filter(name="length")
+def length(favlist):
+	if len(favlist) > 0:
+		return True
+	else:
+		return False	
+
 
