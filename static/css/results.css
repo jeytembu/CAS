@@ -83,9 +83,37 @@
 	font-size: 19px;
 	margin-right: 10px
 }
-.vis{
+.invis{
 	display: none;
+}
+.vis{
+	display: block;
 }
 th{
 	font-size:20px;
 }
+.dp{
+	float:right;
+}
+select{
+	font-weight: bold;
+}
+.jumbotron{
+	height:640px;
+}
+.table-grey{
+	background-color:#ecf0f1; 
+}
+.table-white{
+	background-color: #f9f9f9;
+}
+.k,.exp{
+	float: left;
+	font-weight: bold;
+	font-size: 20px;
+	color: #007f00;
+}
+.exp{
+	margin-left: 20px;
+}
+
