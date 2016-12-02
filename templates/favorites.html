@@ -4,13 +4,14 @@
 {% block head %}
     <link href="{% static 'css/results.css' %}" rel="stylesheet">
     <link href="{% static 'css/results_pager.css' %}" rel="stylesheet">
+    <link href="{% static 'css/favorites.css' %}" rel="stylesheet">
     <script src = "{% static 'js/results_pagination.js' %}"></script>
-    <script src = " {% static 'js/categorise_course.js' %} "></script>
 {% endblock %}
 {% block content %} 
         <div class="container">
             <div class="row">
                 <div class="jumbotron">
+                <a href="javascript: history.go(-{{num}})" class="k">&#x27F5;Back</a>
                    <table class="table table-striped tablerow" id="favorites">
                         <thead>
                             <tr>
@@ -21,16 +22,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {%for fav in favs%}
-                                <tr class="tablerow">
-                                    <td height="80"><h4>{{forloop.counter }}</h4></td>
-                                    <td class = "rowcourse" height="80"><h4>{{fav.course.name}}</h4></td>
-                                    <td class="rowuni" height="80"><h4>{{fav.university.name}}</h4></td>
-                                    <td>
-                                    <button class="btn btn-danger btn-xs rembutton" id="rem{{forloop.counter}}" value="{{forloop.counter}}">remove</button>
-                                    </td>
-                                </tr>
-                            {%endfor%}
+                            {% if favs|length %}
+                                {%for fav in favs%}
+                                    <tr class="tablerow">
+                                        <td height="80"><h4>{{forloop.counter }}</h4></td>
+                                        <td class = "rowcourse" height="80"><h4>{{fav.course.name}}</h4></td>
+                                        <td class="rowuni" height="80"><h4>{{fav.university.name}}</h4></td>
+                                        <td>
+                                            <input type="text" name="{{favs|getCount:fav.course.name}}" value="{{fav.course.code}}" id="favcor{{forloop.counter}}" class="vis" style="display:none;">
+                                            <input type="submit" name="remove" id="rem{{forloop.counter}}" value="remove" class="btn btn-danger btn-xs rembutton">
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" name='check' value="{{fav.course.code}}" id="check{{forloop.counter}}">
+                                        </td>
+                                    </tr>
+                                {%endfor%}
+                            {% endif %}    
                         </tbody>
                     </table>
                     <div id="pageNavPosition"></div>
@@ -40,4 +47,23 @@
         </div>   
 {% endblock %}
 {% block javascript %}
+<script>
+    var pager = new Pager('favorites', 5,'showresults'); 
+    pager.init();
+    pager.showPageNav('pager', 'pageNavPosition'); 
+    pager.showPage(1);
+    $('.btn-danger').click(function(){
+        var coursecode = $(this).prev().val();
+        var count = $(this).prev().attr('name');
+        console.log(count);
+        $.ajax({
+            url : "/delcoursefavorites/", // the endpoint
+            type : "POST", // http method
+            data : { 'delcourse' : coursecode,'count':count}, 
+            // success : function(res) {
+            //     console.log(res); // log the returned json to the console
+            //     console.log("success");} // another sanity check
+        });
+    });   
+</script>
 {% endblock %}
