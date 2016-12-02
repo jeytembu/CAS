@@ -31,7 +31,7 @@ function Pager(tableName, itemsPerPage,resdiv) {
             this.count+=rem;
         }
         var resnum = document.getElementById(resdiv);
-        var res = "Showing results "+this.count+" of "+records;
+        var res = "Showing "+this.count+" of "+records;
 
         var oldPageAnchor = document.getElementById('pg'+this.currentPage);
         oldPageAnchor.className = 'pg-normal';
