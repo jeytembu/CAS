@@ -75,11 +75,13 @@ def test(request):
 	grades = Grades.objects.order_by('id')[:]
 	length = len(question_list) + 1;
 	num = 1
+	favorits = set()
 	favs = []
 	favcourses = Favorites.objects.filter(user_id = request.user.id)
 	if favcourses:
 		for favcourse in favcourses:
-			 favs.append(favcourse.course.name)		 
+			favorits.add(favcourse.course.name)
+		favs = list(favorits)			 
 		request.session['favs'] = favs	 
 	context = {'question_list': question_list,'num':num,'length':length,'subjects':subjects,'grades':grades,'value':value}
 	return render(request, 'test.html', context)
@@ -90,8 +92,8 @@ def explanation(request):
 	return render(request, 'explanation.html',{'desc':desc})
 
 def results(request):
-	choices,codes,careers=[],[],[]
-	cat = set()
+	choices,codes,careers,favs=[],[],[],[]
+	cat,favorits = set(),set()
 	total,temp = 0,0
 	grades,subs,clusters,courses = {},{},{},{}
 	s1,s2,s3,s4,s5={},{},{},{},{}
@@ -275,7 +277,13 @@ def results(request):
 				request.session['courses'] = courses
 				cat1 = list(cat)
 				request.session['cat']=cat1
-				return render(request, 'results.html',{'res':res,'cat':cat,'courses':courses})
+				favcourses = Favorites.objects.filter(user_id = request.user.id)
+				if favcourses:
+					for favcourse in favcourses:
+						favorits.add(favcourse.course.name)
+					favs = list(favorits)	
+					request.session['favs'] = favs
+				return render(request, 'results.html',{'res':res,'cat':cat,'courses':courses,'favs':favs})
 			else:
 				res = "Only 7 to 9 kcse subjects allowed"
 				return render(request, 'error.html',{'res':res})		
@@ -287,6 +295,7 @@ def category(request):
 	if request.is_ajax:
 		res = request.session.get('courses')
 		cat =request.session.get('cat')
+		favs = request.session.get('favs')
 		courses = {}
 		cate = request.GET.get('cat')
 		cate = cate.replace("_"," ")
@@ -303,20 +312,23 @@ def category(request):
 				courses.setdefault(key,[])
 				for val in values:
 					courses[key].append(val)
-		return render(request,'table_body.html',{'courses':courses})
+		return render(request,'table_body.html',{'courses':courses,'favs':favs})
 
 def addfavorite(request):
 	if request.is_ajax:
 		if request.method == "POST":
-			count = 0;
-			unis,favs = [],[]
+			count = 0
+			unis = []
+			favorits = set()
 			coursename = request.POST.get('favcourse')
 			res = request.session.get('courses')
 			if 'favs' in request.session:
 				favs = request.session.get('favs')
-				favs.append(coursename)
-			else:	
-				favs.append(coursename)
+				favorits = set(favs)
+				favorits.add(coursename)
+			else:
+				favorits.add(coursename)
+			favs = list(favorits)	
 			request.session['favs'] = favs
 			for key,values in res.iteritems():
 				if key == coursename:
@@ -329,25 +341,41 @@ def addfavorite(request):
 				universities = Universities.objects.get(name = uni)	
 				favcourses = Courses.objects.get(name = coursename,university_id= universities.id);
 				Favorites.objects.create(user_id=request.user.id,course_id=favcourses.code,university_id=favcourses.university_id)
-	return render(request,'table_body.html')	
+			data= {'favs':favs}		
+	return JsonResponse(data)
 
 def getfavorites(request):
-	favs = Favorites.objects.all()
-	return  render(request,'favorites.html',{'favs':favs})	
+	favs = Favorites.objects.filter(user_id = request.user.id)
+	num = 1;
+	return  render(request,'favorites.html',{'favs':favs,'num':num})	
 
 def delfavorites(request):
 	if request.is_ajax:
 		if request.method == "POST":
-			count = 0;
-			unis = []
 			coursename = request.POST.get('delcourse')
 			favs = request.session.get('favs')
-			favs.remove(coursename)
+			for fav in favs:
+				if fav == coursename:
+					favs.remove(coursename)
 			request.session['favs'] = favs
 			favcourses = Courses.objects.filter(name = coursename)
 			for favcourse in favcourses:
-				delcourses = Favorites.objects.get(course_id = favcourse.code).delete()
-	return render(request,'table_body.html')	
+				delcourses = Favorites.objects.filter(course_id = favcourse.code).delete()
+		data= {'favs':favs}		
+	return JsonResponse(data)
+
+def delcoursefavorites(request):
+	if request.is_ajax:
+		if request.method == "POST":
+			coursecode = request.POST.get('delcourse')
+			count=request.POST.get('count')
+			favs = request.session.get('favs')
+			if int(count) == 1:
+				favcourse = Courses.objects.get(code = coursecode)
+				favs.remove(favcourse.name)
+				request.session['favs'] = favs	
+			delcourse = Favorites.objects.get(course_id = coursecode).delete()		
+	return render(request,'favorites.html',{'favs':favs})		
 
 
 		
