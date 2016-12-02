@@ -5,18 +5,18 @@
     <link href="{% static 'css/results.css' %}" rel="stylesheet">
     <link href="{% static 'css/results_pager.css' %}" rel="stylesheet">
     <script src = "{% static 'js/results_pagination.js' %}"></script>
-    <script src = " {% static 'js/categorise_course.js' %} "></script>
 {% endblock %}
 {% block content %} 
         <div class="container">
             <div class="row">
                 <div class="jumbotron">
                     <div class="ld">
-                        <a href="{% url 'explanation' %}">explanation</a>
+                        <a href="{{request.META.HTTP_REFERER}}" class="k">&#x27F5;Back to Test</a>
+                        <a href="{% url 'explanation' %}" class="exp">Explanation</a>
                         <form action="" method="post" id="fm">
-                            <div >
+                            <div class="dp">
                                 <select name="category" id="coursecat"> 
-                                    <option disabled selected>filter courses</option>
+                                    <option disabled selected>Filter Courses</option>
                                     {% for c in cat %}
                                         <option value="{{c}}">{{c}}</option>
                                     {% endfor %}
@@ -24,7 +24,6 @@
                                 </select>
                             </div>
                         </form>
-                        <a href="{{request.META.HTTP_REFERER}}">Go back</a>
                         <div class="tt">
                             {% include 'table_body.html'%}
 
@@ -42,7 +41,6 @@
         $(".jumbotron").hide();
         var cat = $(this).val();
         cat = cat.replace(/ /g, '_');
-        console.log(cat);
         $('.tt').html('').load('{% url 'category' %}?cat=' + cat);
         $(".jumbotron").fadeIn(700);
 
