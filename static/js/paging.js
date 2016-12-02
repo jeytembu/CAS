@@ -51,8 +51,7 @@ function Pager(tableName, itemsPerPage) {
         }
         else{
             document.getElementById('previous').style.display = '';
-            if(pageNumber >= 1){;
-                console.log('hey')
+            if(pageNumber >= 1){
                 for(var x=1; x <= pageNumber;x++){
                     document.getElementById('pg'+x).style.display = '';
                 }
